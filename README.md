@@ -58,10 +58,3 @@ Engine: MySQL 8
 Schema generation: Hibernate (ddl-auto=update)
 
 ---
-
-## ⚙️ Installation & Setup
-
-### 1️⃣ Clone Repository
-
-```bash
-git clone https://github.com/YOUR_USERNAME/eco-shop-intern-project.git
