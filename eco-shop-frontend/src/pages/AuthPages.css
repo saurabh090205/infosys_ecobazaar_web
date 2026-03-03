@@ -1,0 +1,85 @@
+.auth-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 100px 20px 40px;
+    background: linear-gradient(135deg, var(--green-100) 0%, var(--off-white) 100%);
+}
+
+.auth-container {
+    width: 100%;
+    max-width: 440px;
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    padding: 40px;
+}
+
+.auth-header {
+    text-align: center;
+    margin-bottom: 28px;
+}
+
+.auth-icon {
+    font-size: 2.5rem;
+    display: block;
+    margin-bottom: 12px;
+}
+
+.auth-header h1 {
+    font-size: 1.6rem;
+    font-weight: 800;
+    background: var(--gradient-eco);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.auth-header p {
+    color: var(--gray-600);
+    font-size: 0.9rem;
+    margin-top: 4px;
+}
+
+.auth-submit {
+    width: 100%;
+    margin-top: 8px;
+}
+
+.auth-footer {
+    text-align: center;
+    margin-top: 24px;
+    color: var(--gray-600);
+    font-size: 0.9rem;
+}
+
+.auth-footer a {
+    color: var(--green-700);
+    font-weight: 600;
+}
+
+.auth-footer a:hover {
+    text-decoration: underline;
+}
+
+.demo-accounts {
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid var(--gray-200);
+    text-align: center;
+}
+
+.demo-label {
+    font-size: 0.85rem;
+    color: var(--gray-500);
+    margin-bottom: 10px;
+}
+
+.demo-buttons {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
