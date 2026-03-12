@@ -71,4 +71,11 @@ export const userAPI = {
     updateProfile: (data) => api.put('/users/profile', data),
 };
 
+// ── Carbon Insights ──
+export const carbonAPI = {
+    getUserStats:    () => api.get('/carbon-insights/user-stats'),
+    getMonthlyTrend: () => api.get('/carbon-insights/monthly-trend'),
+    getTopProducts:  () => api.get('/carbon-insights/top-products'),
+};
+
 export default api;
