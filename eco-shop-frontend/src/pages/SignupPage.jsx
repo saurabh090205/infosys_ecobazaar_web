@@ -7,14 +7,22 @@ export default function SignupPage() {
     const { user, register } = useAuth();
     const navigate = useNavigate();
     const [form, setForm] = useState({ username: '', email: '', password: '', fullName: '', role: 'USER' });
+    const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+
+    const passwordsMatch = !confirmPassword || form.password === confirmPassword;
 
     if (user) { navigate('/'); return null; }
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setError(''); setLoading(true);
+        setError('');
+        if (form.password !== confirmPassword) {
+            setError('Passwords do not match');
+            return;
+        }
+        setLoading(true);
         try {
             await register(form);
             navigate('/');
@@ -56,6 +64,14 @@ export default function SignupPage() {
                             onChange={e => setForm({ ...form, password: e.target.value })} required minLength={6} />
                     </div>
                     <div className="form-group">
+                        <label>Confirm Password *</label>
+                        <input className="form-input" type="password" value={confirmPassword}
+                            onChange={e => setConfirmPassword(e.target.value)} required minLength={6} />
+                        {!passwordsMatch && (
+                            <p className="password-mismatch">⚠️ Passwords do not match</p>
+                        )}
+                    </div>
+                    <div className="form-group">
                         <label>Account Type</label>
                         <select className="form-input" value={form.role}
                             onChange={e => setForm({ ...form, role: e.target.value })}>
@@ -63,7 +79,7 @@ export default function SignupPage() {
                             <option value="SELLER">Seller</option>
                         </select>
                     </div>
-                    <button type="submit" className="btn btn-primary auth-submit" disabled={loading}>
+                    <button type="submit" className="btn btn-primary auth-submit" disabled={loading || !passwordsMatch}>
                         {loading ? 'Creating Account...' : 'Create Account'}
                     </button>
                 </form>

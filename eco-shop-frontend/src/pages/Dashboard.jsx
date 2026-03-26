@@ -6,7 +6,6 @@ import EcoBadges from '../components/EcoBadges';
 import TopProductsChart from '../components/TopProductsChart';
 import './Dashboard.css';
 
-//Mock Data 
 const MOCK_STATS = {
     totalCarbonSaved: 42,
     monthlyFootprint: 8.5,
@@ -30,13 +29,12 @@ const MOCK_PRODUCTS = [
     { productName: 'Eco Soap Bar', carbonSaved: 3 },
 ];
 
-
-
 export default function Dashboard() {
     const [stats, setStats] = useState(MOCK_STATS);
     const [trend, setTrend] = useState(MOCK_TREND);
     const [products, setProducts] = useState(MOCK_PRODUCTS);
     const [loading, setLoading] = useState(true);
+    const [usingMock, setUsingMock] = useState(false);
 
     useEffect(() => {
         async function fetchData() {
@@ -51,6 +49,7 @@ export default function Dashboard() {
                 setProducts(productsRes.data);
             } catch {
                 console.log('Using mock data (backend unavailable)');
+                setUsingMock(true);
             } finally {
                 setLoading(false);
             }
@@ -72,6 +71,11 @@ export default function Dashboard() {
             <div className="page-header">
                 <h1>🌱 Carbon Insights Dashboard</h1>
                 <p>Track your environmental impact and eco achievements</p>
+                {usingMock && (
+                    <span style={{ fontSize: '0.85rem', color: 'var(--gray-500)', fontStyle: 'italic' }}>
+                        ⚠️ Showing sample data – place orders to see real stats
+                    </span>
+                )}
             </div>
 
             {/* Summary Cards */}
@@ -104,7 +108,7 @@ export default function Dashboard() {
             {/* Two-column: Badges + Top Products */}
             <div className="dashboard-grid-2">
                 <div className="dashboard-section">
-                    <EcoBadges />
+                    <EcoBadges totalCarbonSaved={stats.totalCarbonSaved} />
                 </div>
                 <div className="dashboard-section">
                     <TopProductsChart data={products} />

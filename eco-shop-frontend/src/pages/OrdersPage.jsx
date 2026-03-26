@@ -5,13 +5,38 @@ import './OrdersPage.css';
 export default function OrdersPage() {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [cancellingId, setCancellingId] = useState(null);
 
-    useEffect(() => {
+    const fetchOrders = () => {
         orderAPI.getHistory()
             .then(res => setOrders(res.data))
             .catch(() => { })
             .finally(() => setLoading(false));
-    }, []);
+    };
+
+    useEffect(() => { fetchOrders(); }, []);
+
+    const handleCancel = async (orderId) => {
+        if (!window.confirm('Are you sure you want to cancel this order?')) return;
+        setCancellingId(orderId);
+        try {
+            await orderAPI.cancel(orderId);
+            fetchOrders();
+        } catch (e) {
+            alert(e.response?.data?.message || 'Failed to cancel order');
+        } finally {
+            setCancellingId(null);
+        }
+    };
+
+    const getStatusClass = (status) => {
+        switch (status) {
+            case 'CONFIRMED': return 'badge-eco';
+            case 'CANCELLED': return 'badge-cancelled';
+            case 'DELIVERED': return 'badge-delivered';
+            default: return 'badge-eco';
+        }
+    };
 
     if (loading) return <div className="page"><div className="spinner" style={{ marginTop: '200px' }}></div></div>;
 
@@ -40,7 +65,7 @@ export default function OrdersPage() {
                                             {new Date(order.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
                                         </span>
                                     </div>
-                                    <span className="badge badge-eco">{order.status}</span>
+                                    <span className={`badge ${getStatusClass(order.status)}`}>{order.status}</span>
                                 </div>
                                 <div className="order-items">
                                     {order.items.map((item, j) => (
@@ -51,8 +76,19 @@ export default function OrdersPage() {
                                     ))}
                                 </div>
                                 <div className="order-footer">
-                                    <span className="order-total">Total: ${order.totalPrice.toFixed(2)}</span>
-                                    <span className="badge badge-carbon">🏭 {order.totalCarbonFootprint.toFixed(2)} kg CO₂</span>
+                                    <div className="order-footer-left">
+                                        <span className="order-total">Total: ${order.totalPrice.toFixed(2)}</span>
+                                        <span className="badge badge-carbon">🏭 {order.totalCarbonFootprint.toFixed(2)} kg CO₂</span>
+                                    </div>
+                                    {order.status === 'CONFIRMED' && (
+                                        <button
+                                            className="btn btn-sm btn-danger"
+                                            onClick={() => handleCancel(order.id)}
+                                            disabled={cancellingId === order.id}
+                                        >
+                                            {cancellingId === order.id ? 'Cancelling...' : '✕ Cancel Order'}
+                                        </button>
+                                    )}
                                 </div>
                             </div>
                         ))}

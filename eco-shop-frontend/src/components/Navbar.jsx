@@ -44,6 +44,12 @@ export default function Navbar({ cartCount }) {
                             {(user.role === 'ADMIN' || user.role === 'SELLER') && (
                                 <Link to="/admin/products" className="nav-link" onClick={() => setMenuOpen(false)}>Manage</Link>
                             )}
+                            {user.role === 'SELLER' && (
+                                <Link to="/seller/dashboard" className="nav-link" onClick={() => setMenuOpen(false)}>📊 Seller</Link>
+                            )}
+                            {user.role === 'ADMIN' && (
+                                <Link to="/admin/dashboard" className="nav-link" onClick={() => setMenuOpen(false)}>🛡️ Admin</Link>
+                            )}
                             <div className="nav-user">
                                 <Link to="/profile" className="nav-link user-link" onClick={() => setMenuOpen(false)}>
                                     <span className="user-avatar">{user.username[0].toUpperCase()}</span>

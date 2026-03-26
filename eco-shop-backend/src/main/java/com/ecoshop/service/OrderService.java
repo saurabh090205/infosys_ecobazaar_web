@@ -74,6 +74,28 @@ public class OrderService {
                 .toList();
     }
 
+    @Transactional
+    public OrderResponse cancelOrder(Long orderId, Long userId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+
+        if (!order.getUserId().equals(userId)) {
+            throw new RuntimeException("You can only cancel your own orders");
+        }
+
+        if ("CANCELLED".equals(order.getStatus())) {
+            throw new RuntimeException("Order is already cancelled");
+        }
+
+        if ("DELIVERED".equals(order.getStatus())) {
+            throw new RuntimeException("Delivered orders cannot be cancelled");
+        }
+
+        order.setStatus("CANCELLED");
+        orderRepository.save(order);
+        return mapToResponse(order);
+    }
+
     private OrderResponse mapToResponse(Order order) {
         List<OrderResponse.OrderItemDetail> items = order.getItems().stream().map(item -> {
             String productName = productRepository.findById(item.getProductId())

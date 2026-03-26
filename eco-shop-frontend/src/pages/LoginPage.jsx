@@ -52,6 +52,12 @@ export default function LoginPage() {
                     </button>
                 </form>
 
+                <div className="forgot-password-link" style={{ textAlign: 'right', marginTop: '8px' }}>
+                    <Link to="/forgot-password" style={{ color: 'var(--green-700)', fontSize: '0.85rem', fontWeight: 600 }}>
+                        Forgot Password?
+                    </Link>
+                </div>
+
                 <div className="demo-accounts">
                     <p className="demo-label">Quick Demo:</p>
                     <div className="demo-buttons">

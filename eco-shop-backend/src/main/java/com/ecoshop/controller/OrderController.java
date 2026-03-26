@@ -34,6 +34,14 @@ public class OrderController {
         return ResponseEntity.ok(orderService.getOrderHistory(userId));
     }
 
+    @PutMapping("/{id}/cancel")
+    public ResponseEntity<OrderResponse> cancelOrder(
+            @PathVariable Long id,
+            Authentication authentication) {
+        Long userId = getUserId(authentication);
+        return ResponseEntity.ok(orderService.cancelOrder(id, userId));
+    }
+
     private Long getUserId(Authentication authentication) {
         User user = userRepository.findByUsername(authentication.getName())
                 .orElseThrow(() -> new RuntimeException("User not found"));

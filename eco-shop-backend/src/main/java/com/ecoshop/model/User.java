@@ -38,6 +38,9 @@ public class User {
     @Column(length = 20)
     private String phone;
 
+    @Builder.Default
+    private Boolean isVerified = false;
+
     @Column(updatable = false)
     private LocalDateTime createdAt;
 

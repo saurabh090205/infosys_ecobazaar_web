@@ -20,6 +20,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final OtpService otpService;
 
     public AuthResponse register(RegisterRequest request) {
         if (userRepository.existsByUsername(request.getUsername())) {
@@ -110,6 +111,37 @@ public class AuthService {
         }
 
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
+    }
+
+    /**
+     * Step 1: Request a password-reset OTP for the given email.
+     */
+    public String requestPasswordReset(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("No account found with this email"));
+        return otpService.generateAndSendOtp(user.getEmail());
+    }
+
+    /**
+     * Step 2: Verify the OTP. On success, marks the email as verified.
+     */
+    public boolean verifyResetOtp(String email, String otp) {
+        userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("No account found with this email"));
+        return otpService.verifyOtp(email, otp);
+    }
+
+    /**
+     * Step 3: Reset password — only allowed after OTP verification.
+     */
+    public void resetPassword(String email, String newPassword) {
+        if (!otpService.isVerified(email)) {
+            throw new RuntimeException("OTP verification is required before resetting password");
+        }
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("No account found with this email"));
+        user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
     }
 }

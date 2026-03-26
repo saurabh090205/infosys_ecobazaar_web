@@ -42,6 +42,9 @@ public class Product {
     @Column(nullable = false)
     private Boolean isEcoFriendly;
 
+    @Builder.Default
+    private Boolean isCertified = false;
+
     private Long sellerId;
 
     @Column(nullable = false)

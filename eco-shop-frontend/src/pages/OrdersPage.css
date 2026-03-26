@@ -51,12 +51,31 @@
     justify-content: space-between;
     align-items: center;
     margin-top: 12px;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.order-footer-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
 }
 
 .order-total {
     font-weight: 800;
     font-size: 1.1rem;
     color: var(--green-800);
+}
+
+.badge-cancelled {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.badge-delivered {
+    background: #d1ecf1;
+    color: #0c5460;
 }
 
 .no-orders {
