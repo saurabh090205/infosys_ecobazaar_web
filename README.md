@@ -58,3 +58,19 @@ Engine: MySQL 8
 Schema generation: Hibernate (ddl-auto=update)
 
 ---
+
+## Running of the project
+
+1. open terminal
+- run cd eco-shop-backend 
+- run mvn spring-boot:run
+  
+2. open another terminal
+- run cd eco-shop-frontend
+- run npm run dev
+
+and go the port showing.
+
+---
+
+
