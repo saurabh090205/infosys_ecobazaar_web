@@ -9,8 +9,8 @@ import java.util.List;
 public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
 
     @Query("SELECT oi.productId, SUM(oi.quantity * oi.carbonAtPurchase) as totalCarbon " +
-           "FROM OrderItem oi JOIN oi.order o WHERE o.userId = :userId " +
-           "GROUP BY oi.productId ORDER BY totalCarbon DESC")
+           "FROM OrderItem oi JOIN oi.order o JOIN Product p ON oi.productId = p.id WHERE o.userId = :userId " +
+           "GROUP BY oi.productId ORDER BY SUM(oi.quantity) DESC, MAX(p.ecoRating) DESC")
     List<Object[]> topCarbonProductsByUser(@Param("userId") Long userId);
 
     @Query("SELECT oi FROM OrderItem oi WHERE oi.productId IN :productIds")

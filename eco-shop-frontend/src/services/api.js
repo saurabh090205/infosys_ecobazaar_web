@@ -89,6 +89,7 @@ export const adminAPI = {
     getCertifications:    (status) => api.get('/admin/certifications', { params: status ? { status } : {} }),
     reviewCertification:  (id, data) => api.put(`/admin/certifications/${id}/review`, data),
     getPlatformStats:     () => api.get('/admin/platform-stats'),
+    getEcoReport:         () => api.get('/admin/eco-report', { responseType: 'blob' }),
 };
 
 // ── Seller ──
@@ -96,6 +97,7 @@ export const sellerAPI = {
     getStats:             () => api.get('/seller/stats'),
     getCertifications:    () => api.get('/seller/certifications'),
     requestCertification: (productId) => api.post('/seller/certifications', { productId }),
+    getEcoReport:         () => api.get('/seller/eco-report', { responseType: 'blob' }),
 };
 
 export default api;

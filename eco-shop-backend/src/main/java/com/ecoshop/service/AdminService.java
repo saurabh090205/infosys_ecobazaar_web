@@ -26,6 +26,7 @@ public class AdminService {
             map.put("email", u.getEmail());
             map.put("role", u.getRole().name());
             map.put("fullName", u.getFullName() != null ? u.getFullName() : "");
+            map.put("storeName", u.getFullName() != null && !u.getFullName().isBlank() ? u.getFullName() : u.getUsername());
             map.put("isVerified", u.getIsVerified() != null ? u.getIsVerified() : false);
             map.put("createdAt", u.getCreatedAt());
             return map;
@@ -72,7 +73,8 @@ public class AdminService {
         long totalProducts = productRepository.count();
         long totalOrders = orderRepository.count();
         Double totalCarbon = orderRepository.totalPlatformCarbon();
-        Long totalBuyers = orderRepository.countDistinctBuyers();
+        long totalBuyers = userRepository.findAll().stream().filter(u -> "BUYER".equals(u.getRole().name())).count();
+        long totalSellers = userRepository.findAll().stream().filter(u -> "SELLER".equals(u.getRole().name())).count();
         long totalCertifications = certRepository.count();
         long pendingCertifications = certRepository.findByStatus("PENDING").size();
 
@@ -81,7 +83,8 @@ public class AdminService {
         stats.put("totalProducts", totalProducts);
         stats.put("totalOrders", totalOrders);
         stats.put("totalCarbonFootprint", totalCarbon != null ? Math.round(totalCarbon * 100.0) / 100.0 : 0.0);
-        stats.put("totalBuyers", totalBuyers != null ? totalBuyers : 0);
+        stats.put("totalBuyers", totalBuyers);
+        stats.put("totalSellers", totalSellers);
         stats.put("totalCertifications", totalCertifications);
         stats.put("pendingCertifications", pendingCertifications);
         return stats;

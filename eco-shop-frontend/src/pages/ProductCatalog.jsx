@@ -9,6 +9,7 @@ export default function ProductCatalog() {
     const [search, setSearch] = useState('');
     const [ecoOnly, setEcoOnly] = useState(false);
     const [category, setCategory] = useState('');
+    const [sortBy, setSortBy] = useState('');
 
     const categories = ['Clothing', 'Home', 'Personal Care', 'Electronics', 'Food & Drink'];
 
@@ -16,14 +17,15 @@ export default function ProductCatalog() {
         setLoading(true);
         const params = {};
         if (search) params.search = search;
-        else if (ecoOnly) params.ecoFriendly = true;
-        else if (category) params.category = category;
+        if (ecoOnly) params.ecoFriendly = true;
+        if (category) params.category = category;
+        if (sortBy) params.sort = sortBy;
 
         productAPI.getAll(params)
             .then(res => setProducts(res.data))
             .catch(() => { })
             .finally(() => setLoading(false));
-    }, [search, ecoOnly, category]);
+    }, [search, ecoOnly, category, sortBy]);
 
     const renderStars = (rating) =>
         Array.from({ length: 5 }, (_, i) => (
@@ -39,22 +41,29 @@ export default function ProductCatalog() {
                 </div>
 
                 {/* Filters */}
-                <div className="catalog-filters card">
-                    <div className="filter-search">
+                <div className="catalog-filters card" style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                    <div className="filter-search" style={{ flex: '1 1 200px' }}>
                         <input className="form-input" type="text" placeholder="Search products..."
-                            value={search} onChange={e => { setSearch(e.target.value); setCategory(''); setEcoOnly(false); }} />
+                            value={search} onChange={e => setSearch(e.target.value)} style={{ width: '100%' }} />
                     </div>
-                    <div className="filter-actions">
-                        <button className={`btn btn-sm ${ecoOnly ? 'btn-primary' : 'btn-secondary'}`}
-                            onClick={() => { setEcoOnly(!ecoOnly); setSearch(''); setCategory(''); }}>
-                            🌿 Eco-Friendly Only
-                        </button>
-                        <select className="form-input filter-select" value={category}
-                            onChange={e => { setCategory(e.target.value); setSearch(''); setEcoOnly(false); }}>
-                            <option value="">All Categories</option>
-                            {categories.map(c => <option key={c} value={c}>{c}</option>)}
-                        </select>
-                    </div>
+                    
+                    <button className={`btn btn-sm ${ecoOnly ? 'btn-primary' : 'btn-secondary'}`}
+                        onClick={() => setEcoOnly(!ecoOnly)}>
+                        🌿 Eco-Friendly
+                    </button>
+                    
+                    <select className="form-input filter-select" value={category}
+                        onChange={e => setCategory(e.target.value)}>
+                        <option value="">All Categories</option>
+                        {categories.map(c => <option key={c} value={c}>{c}</option>)}
+                    </select>
+
+                    <select className="form-input filter-select" value={sortBy}
+                        onChange={e => setSortBy(e.target.value)}>
+                        <option value="">Sort by Default</option>
+                        <option value="price_asc">Price: Low to High</option>
+                        <option value="price_desc">Price: High to Low</option>
+                    </select>
                 </div>
 
                 {loading ? (
@@ -70,7 +79,11 @@ export default function ProductCatalog() {
                                 style={{ animationDelay: `${i * 0.05}s` }}>
                                 <div className="product-img">
                                     <img src={p.imageUrl} alt={p.name} />
-                                    {p.isEcoFriendly && <span className="badge badge-eco eco-tag">🌿 Eco</span>}
+                                    <div className="product-badges" style={{ position: 'absolute', top: '10px', right: '10px', display: 'flex', flexDirection: 'column', gap: '5px', alignItems: 'flex-end', zIndex: 10 }}>
+                                        {p.isEcoFriendly && <span className="badge badge-success">🌿 Eco</span>}
+                                        {p.isCertified && <span className="badge badge-primary">🏆 Certified</span>}
+                                        {p.isSellerVerified && <span className="badge badge-warning">✓ Verified Seller</span>}
+                                    </div>
                                 </div>
                                 <div className="product-info">
                                     <span className="product-category">{p.category}</span>

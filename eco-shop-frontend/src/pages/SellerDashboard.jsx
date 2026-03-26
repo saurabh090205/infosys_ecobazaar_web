@@ -42,6 +42,22 @@ export default function SellerDashboard() {
         finally { setRequesting(false); }
     };
 
+    const handleDownloadReport = async () => {
+        try {
+            const res = await sellerAPI.getEcoReport();
+            const url = window.URL.createObjectURL(new Blob([res.data], { type: 'text/csv' }));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'seller_eco_report.csv');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        } catch (e) {
+            console.error('Failed to download report', e);
+            alert('Failed to download eco report');
+        }
+    };
+
     if (loading) return <div className="page"><div className="spinner" style={{ marginTop: '200px' }}></div></div>;
 
     return (
@@ -49,6 +65,11 @@ export default function SellerDashboard() {
             <div className="page-header">
                 <h1>📊 Seller Analytics Dashboard</h1>
                 <p>Track your products, sales, and green certifications</p>
+                <div style={{ marginTop: '1rem' }}>
+                    <button className="btn btn-secondary" onClick={handleDownloadReport}>
+                        📥 Download Eco Report
+                    </button>
+                </div>
             </div>
 
             {/* Stats Cards */}

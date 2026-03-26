@@ -48,4 +48,15 @@ public class AdminController {
     public ResponseEntity<Map<String, Object>> getPlatformStats() {
         return ResponseEntity.ok(adminService.getPlatformStats());
     }
+
+    @GetMapping("/eco-report")
+    public ResponseEntity<String> getEcoReport() {
+        Map<String, Object> stats = adminService.getPlatformStats();
+        StringBuilder csv = new StringBuilder("Metric,Value\n");
+        stats.forEach((k, v) -> csv.append(k).append(",").append(v).append("\n"));
+        return ResponseEntity.ok()
+                .header(org.springframework.http.HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"admin_eco_report.csv\"")
+                .contentType(org.springframework.http.MediaType.TEXT_PLAIN)
+                .body(csv.toString());
+    }
 }

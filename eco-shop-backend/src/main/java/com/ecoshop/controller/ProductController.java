@@ -26,20 +26,10 @@ public class ProductController {
             @RequestParam(required = false) String search,
             @RequestParam(required = false) Boolean ecoFriendly,
             @RequestParam(required = false) String category,
-            @RequestParam(required = false) Long sellerId) {
+            @RequestParam(required = false) Long sellerId,
+            @RequestParam(required = false) String sort) {
 
-        List<Product> products;
-        if (sellerId != null) {
-            products = productService.getSellerProducts(sellerId);
-        } else if (search != null && !search.isBlank()) {
-            products = productService.searchProducts(search);
-        } else if (Boolean.TRUE.equals(ecoFriendly)) {
-            products = productService.getEcoFriendlyProducts();
-        } else if (category != null && !category.isBlank()) {
-            products = productService.getProductsByCategory(category);
-        } else {
-            products = productService.getAllProducts();
-        }
+        List<Product> products = productService.getFilteredProducts(search, category, ecoFriendly, sellerId, sort);
         return ResponseEntity.ok(products);
     }
 

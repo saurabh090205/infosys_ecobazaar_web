@@ -8,12 +8,16 @@ import java.util.List;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
-    List<Product> findByIsEcoFriendlyTrue();
-
-    List<Product> findByCategory(String category);
-
-    @Query("SELECT p FROM Product p WHERE LOWER(p.name) LIKE LOWER(CONCAT('%',:q,'%')) OR LOWER(p.description) LIKE LOWER(CONCAT('%',:q,'%'))")
-    List<Product> search(@Param("q") String query);
+    @Query("SELECT p FROM Product p WHERE " +
+           "(:sellerId IS NULL OR p.sellerId = :sellerId) AND " +
+           "(:q IS NULL OR (:q = '') OR LOWER(p.name) LIKE LOWER(CONCAT('%', :q, '%')) OR LOWER(p.description) LIKE LOWER(CONCAT('%', :q, '%'))) AND " +
+           "(:category IS NULL OR (:category = '') OR p.category = :category) AND " +
+           "(:ecoFriendly IS NULL OR :ecoFriendly = false OR p.isEcoFriendly = true)")
+    List<Product> searchProductsWithFilters(@Param("q") String query,
+                                            @Param("category") String category,
+                                            @Param("ecoFriendly") Boolean ecoFriendly,
+                                            @Param("sellerId") Long sellerId,
+                                            org.springframework.data.domain.Sort sort);
 
     @Query("SELECT p FROM Product p WHERE p.category = :cat AND p.id <> :pid AND p.carbonFootprintKg < :carbon ORDER BY p.carbonFootprintKg ASC")
     List<Product> findGreenerAlternatives(@Param("cat") String category,

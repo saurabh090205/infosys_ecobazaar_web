@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { adminAPI } from '../services/api';
 import StatCard from '../components/StatCard';
 import './AdminDashboard.css';
@@ -40,6 +41,22 @@ export default function AdminDashboard() {
         } catch (e) { alert('Review failed'); }
     };
 
+    const handleDownloadReport = async () => {
+        try {
+            const res = await adminAPI.getEcoReport();
+            const url = window.URL.createObjectURL(new Blob([res.data], { type: 'text/csv' }));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'admin_eco_report.csv');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        } catch (e) {
+            console.error('Failed to download report', e);
+            alert('Failed to download eco report');
+        }
+    };
+
     if (loading) return <div className="page"><div className="spinner" style={{ marginTop: '200px' }}></div></div>;
 
     return (
@@ -47,12 +64,18 @@ export default function AdminDashboard() {
             <div className="page-header">
                 <h1>🛡️ Admin Dashboard</h1>
                 <p>Manage users, certifications, and platform sustainability</p>
+                <div style={{ marginTop: '1rem' }}>
+                    <button className="btn btn-secondary" onClick={handleDownloadReport}>
+                        📥 Download Eco Report
+                    </button>
+                </div>
             </div>
 
             {/* Platform Stats */}
             {stats && (
                 <div className="dashboard-cards">
-                    <StatCard icon="👥" value={stats.totalUsers} label="Total Users" color="#457b9d" />
+                    <StatCard icon="🛍️" value={stats.totalBuyers} label="Total Buyers" color="#457b9d" />
+                    <StatCard icon="🏪" value={stats.totalSellers} label="Total Sellers" color="#1d3557" />
                     <StatCard icon="📦" value={stats.totalProducts} label="Total Products" color="#2d6a4f" />
                     <StatCard icon="🛒" value={stats.totalOrders} label="Total Orders" color="#f4a261" />
                     <StatCard icon="🏭" value={`${stats.totalCarbonFootprint} kg`} label="Platform CO₂" color="#e76f51" />
@@ -80,6 +103,7 @@ export default function AdminDashboard() {
                                 <tr>
                                     <th>ID</th>
                                     <th>Username</th>
+                                    <th>Store Name</th>
                                     <th>Email</th>
                                     <th>Role</th>
                                     <th>Verified</th>
@@ -91,6 +115,7 @@ export default function AdminDashboard() {
                                     <tr key={u.id}>
                                         <td>{u.id}</td>
                                         <td><strong>{u.username}</strong></td>
+                                        <td>{u.role === 'SELLER' ? u.storeName : '—'}</td>
                                         <td>{u.email}</td>
                                         <td><span className={`role-badge role-${u.role.toLowerCase()}`}>{u.role}</span></td>
                                         <td>{u.isVerified ? '✅' : '❌'}</td>
@@ -141,16 +166,21 @@ export default function AdminDashboard() {
                                             </td>
                                             <td>{new Date(c.requestedAt).toLocaleDateString()}</td>
                                             <td>
-                                                {c.status === 'PENDING' && (
-                                                    <div className="cert-actions">
-                                                        <button className="btn btn-sm btn-primary" onClick={() => handleReview(c.id, 'APPROVED')}>
-                                                            ✅ Approve
-                                                        </button>
-                                                        <button className="btn btn-sm btn-danger" onClick={() => handleReview(c.id, 'REJECTED')}>
-                                                            ❌ Reject
-                                                        </button>
-                                                    </div>
-                                                )}
+                                                <div className="cert-actions">
+                                                    <Link to={`/products/${c.productId}`} className="btn btn-sm btn-secondary" style={{ marginRight: '5px' }}>
+                                                        View Product
+                                                    </Link>
+                                                    {c.status === 'PENDING' && (
+                                                        <>
+                                                            <button className="btn btn-sm btn-primary" onClick={() => handleReview(c.id, 'APPROVED')}>
+                                                                ✅ Approve
+                                                            </button>
+                                                            <button className="btn btn-sm btn-danger" onClick={() => handleReview(c.id, 'REJECTED')}>
+                                                                ❌ Reject
+                                                            </button>
+                                                        </>
+                                                    )}
+                                                </div>
                                             </td>
                                         </tr>
                                     ))}

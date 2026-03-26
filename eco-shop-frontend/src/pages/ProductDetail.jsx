@@ -66,8 +66,18 @@ export default function ProductDetail({ onCartUpdate }) {
 
                         <div className="detail-ratings">
                             <div className="eco-stars">{renderStars(product.ecoRating)}</div>
-                            {product.isEcoFriendly && <span className="badge badge-eco">🌿 Eco-Friendly</span>}
+                            <div style={{ display: 'flex', gap: '5px', flexWrap: 'wrap' }}>
+                                {product.isEcoFriendly && <span className="badge badge-eco">🌿 Eco-Friendly</span>}
+                                {product.isCertified && <span className="badge badge-success">🏆 Certified Green</span>}
+                            </div>
                         </div>
+
+                        {product.storeName && (
+                            <div className="product-seller" style={{ marginTop: '0.5rem', marginBottom: '1rem', fontSize: '0.95rem', color: '#666' }}>
+                                <span>Sold by: <strong style={{color: '#333'}}>{product.storeName}</strong></span>
+                                {product.isSellerVerified && <span className="badge badge-primary" style={{ marginLeft: '8px', fontSize: '0.75rem' }}>✓ Verified Seller</span>}
+                            </div>
+                        )}
 
                         <p className="detail-price">${product.price.toFixed(2)}</p>
                         <p className="detail-desc">{product.description}</p>
@@ -91,12 +101,14 @@ export default function ProductDetail({ onCartUpdate }) {
                         </div>
 
                         {user ? (
-                            <div className="detail-actions">
-                                <button className="btn btn-primary" onClick={handleAddToCart} disabled={addingToCart}>
-                                    {addingToCart ? 'Adding...' : '🛒 Add to Cart'}
-                                </button>
-                                {addedMsg && <span className="added-msg">{addedMsg}</span>}
-                            </div>
+                            user.role !== 'ADMIN' ? (
+                                <div className="detail-actions">
+                                    <button className="btn btn-primary" onClick={handleAddToCart} disabled={addingToCart}>
+                                        {addingToCart ? 'Adding...' : '🛒 Add to Cart'}
+                                    </button>
+                                    {addedMsg && <span className="added-msg">{addedMsg}</span>}
+                                </div>
+                            ) : null
                         ) : (
                             <Link to="/login" className="btn btn-primary">Login to Purchase</Link>
                         )}

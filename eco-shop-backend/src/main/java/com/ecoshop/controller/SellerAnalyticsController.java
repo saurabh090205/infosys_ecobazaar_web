@@ -46,4 +46,16 @@ public class SellerAnalyticsController {
                 .orElseThrow(() -> new RuntimeException("User not found"));
         return user.getId();
     }
+
+    @GetMapping("/eco-report")
+    public ResponseEntity<String> getSellerEcoReport(Authentication authentication) {
+        Long sellerId = getUserId(authentication);
+        Map<String, Object> stats = sellerAnalyticsService.getSellerStats(sellerId);
+        StringBuilder csv = new StringBuilder("Metric,Value\n");
+        stats.forEach((k, v) -> csv.append(k).append(",").append(v).append("\n"));
+        return ResponseEntity.ok()
+                .header(org.springframework.http.HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"seller_eco_report.csv\"")
+                .contentType(org.springframework.http.MediaType.TEXT_PLAIN)
+                .body(csv.toString());
+    }
 }

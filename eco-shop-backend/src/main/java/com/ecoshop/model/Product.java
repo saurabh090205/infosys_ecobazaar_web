@@ -47,6 +47,13 @@ public class Product {
 
     private Long sellerId;
 
+    @Transient
+    private String storeName;
+
+    @Transient
+    @Builder.Default
+    private Boolean isSellerVerified = false;
+
     @Column(nullable = false)
     private Integer stock;
 

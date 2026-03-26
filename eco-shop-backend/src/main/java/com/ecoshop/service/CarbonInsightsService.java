@@ -38,6 +38,7 @@ public class CarbonInsightsService {
         return Map.of(
                 "totalCarbonSaved", Math.round(totalCarbon * 100.0) / 100.0,
                 "monthlyFootprint", Math.round(monthlyFootprint * 100.0) / 100.0,
+                "monthlyCarbonSaved", Math.round(monthlyFootprint * 100.0) / 100.0,
                 "carbonRank", rank
         );
     }

@@ -9,7 +9,7 @@ import './Dashboard.css';
 const MOCK_STATS = {
     totalCarbonSaved: 42,
     monthlyFootprint: 8.5,
-    carbonRank: 12,
+    monthlyCarbonSaved: 6.2,
 };
 
 const MOCK_TREND = [
@@ -90,12 +90,12 @@ export default function Dashboard() {
                     icon="📊"
                     value={`${stats.monthlyFootprint} kg`}
                     label="Monthly Carbon Footprint"
-                    color="#f4a261"
+                    color="#e76f51"
                 />
                 <StatCard
-                    icon="🏆"
-                    value={`#${stats.carbonRank}`}
-                    label="Carbon Rank"
+                    icon="📉"
+                    value={`${stats.monthlyCarbonSaved} kg`}
+                    label="Monthly Carbon Saved"
                     color="#457b9d"
                 />
             </div>

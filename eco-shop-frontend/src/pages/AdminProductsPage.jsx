@@ -105,7 +105,9 @@ export default function AdminProductsPage() {
 
                 <div className="admin-toolbar">
                     <span className="admin-count">{products.length} products</span>
-                    <button className="btn btn-primary" onClick={openCreate}>+ Add Product</button>
+                    {user?.role !== 'ADMIN' && (
+                        <button className="btn btn-primary" onClick={openCreate}>+ Add Product</button>
+                    )}
                 </div>
 
                 {/* ── Create / Edit Form ── */}
@@ -205,7 +207,7 @@ export default function AdminProductsPage() {
                                     <th>CO₂ (kg)</th>
                                     <th>Eco</th>
                                     <th>Stock</th>
-                                    <th>Actions</th>
+                                    {user?.role !== 'ADMIN' && <th>Actions</th>}
                                 </tr>
                             </thead>
                             <tbody>
@@ -226,16 +228,18 @@ export default function AdminProductsPage() {
                                         </td>
                                         <td>{p.isEcoFriendly ? '🌿' : '—'}</td>
                                         <td>{p.stock}</td>
-                                        <td>
-                                            <div className="admin-actions">
-                                                <button className="btn btn-sm btn-secondary" onClick={() => openEdit(p)}>
-                                                    Edit
-                                                </button>
-                                                <button className="btn btn-sm btn-danger" onClick={() => handleDelete(p.id)}>
-                                                    Delete
-                                                </button>
-                                            </div>
-                                        </td>
+                                        {user?.role !== 'ADMIN' && (
+                                            <td>
+                                                <div className="admin-actions">
+                                                    <button className="btn btn-sm btn-secondary" onClick={() => openEdit(p)}>
+                                                        Edit
+                                                    </button>
+                                                    <button className="btn btn-sm btn-danger" onClick={() => handleDelete(p.id)}>
+                                                        Delete
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        )}
                                     </tr>
                                 ))}
                             </tbody>
